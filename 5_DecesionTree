@@ -1,0 +1,49 @@
+import pandas as pd
+from sklearn.model_selecƟon import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classificaƟon_report
+from sklearn.preprocessing import LabelEncoder
+# Sample retail sales data
+data = {
+ 'Product_ID': [101, 102, 103, 104, 105, 106, 107, 108],
+ 'Category': ['Electronics', 'Furniture', 'Electronics', 'Clothing', 'Furniture', 'Clothing', 'Electronics',
+'Furniture'],
+ 'Region': ['North', 'East', 'West', 'South', 'North', 'West', 'East', 'South'],
+ 'PromoƟon': ['Yes', 'No', 'Yes', 'Yes', 'No', 'No', 'Yes', 'Yes'],
+ 'Sales': ['High', 'Low', 'High', 'High', 'Low', 'Low', 'High', 'High']
+}
+# Convert the data into a pandas DataFrame
+df = pd.DataFrame(data)
+# Encode categorical variables (Category, Region, PromoƟon, and Sales)
+label_encoder = LabelEncoder()
+df['Category'] = label_encoder.fit_transform(df['Category'])
+df['Region'] = label_encoder.fit_transform(df['Region'])
+df['PromoƟon'] = label_encoder.fit_transform(df['PromoƟon'])
+df['Sales'] = label_encoder.fit_transform(df['Sales']) # Target variable (Sales as High=1, Low=0)
+# Feature selecƟon: Independent variables (X) and target variable (y)
+X = df[['Category', 'Region', 'PromoƟon']] # Features
+y = df['Sales'] # Target
+# Split the data into training and tesƟng sets (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# IniƟalize the Decision Tree Classifier
+model = DecisionTreeClassifier(random_state=42)
+# Train the model on the training data
+model.fit(X_train, y_train)
+# Make predicƟons on the test set
+y_pred = model.predict(X_test)
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy * 100:.2f}%")
+# Confusion Matrix
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+# ClassificaƟon Report
+print("ClassificaƟon Report:")
+print(classificaƟon_report(y_test, y_pred))
+# Visualizing the decision tree (OpƟonal)
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+plt.figure(figsize=(12,8))
+plot_tree(model, feature_names=['Category', 'Region', 'PromoƟon'], class_names=['Low', 'High'],
+filled=True)
+plt.show() 
